@@ -206,5 +206,17 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-.ipynb_checkpoints/
+# Ignore all pickle/model files
 *.pkl
+*.joblib
+
+# Ignore notebooks' checkpoints
+.ipynb_checkpoints/
+
+# Ignore large data files
+*.csv
+*.parquet
+*.h5
+*.model
+*.bin
+
