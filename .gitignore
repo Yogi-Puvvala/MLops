@@ -220,7 +220,4 @@ __marimo__/
 *.model
 *.bin
 
-# MLflow tracking and artifacts
-mlruns/
-mlartifacts/
 
