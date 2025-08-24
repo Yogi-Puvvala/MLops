@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/886002771329622691/a6b317ac98df480bbbbee99c5b56b6d5/artifacts
+deleted_time: 1756024964163
+end_time: 1756024858156
+entry_point_name: ''
+experiment_id: '886002771329622691'
+lifecycle_stage: deleted
+run_id: a6b317ac98df480bbbbee99c5b56b6d5
+run_name: Duration Prediction Model - XGBR
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756024858038
+status: 4
+tags: []
+user_id: codespace

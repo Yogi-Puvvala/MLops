@@ -1,0 +1,7 @@
+artifact_location: file:///workspaces/MLops/01-intro/mlruns/911397039475653742
+creation_time: 1755784345007
+experiment_id: '911397039475653742'
+last_update_time: 1756024955858
+lifecycle_stage: deleted
+name: Duration Prediction Model
+tags: {}

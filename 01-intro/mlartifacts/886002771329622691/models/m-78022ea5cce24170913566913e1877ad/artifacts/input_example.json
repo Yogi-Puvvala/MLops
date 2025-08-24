@@ -1,0 +1,1 @@
+{"columns": ["trip_distance", "total_amount", "PULocationID", "DOLocationID", "time_sin", "time_cos"], "data": [[180.0, 250.0, 70.0, 160.0, 0.8660254037844386, 0.5000000000000001]]}

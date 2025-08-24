@@ -1,0 +1,37 @@
+artifact_path: mlflow-artifacts:/886002771329622691/models/m-efc1463bd6be48a69e90ab365d025762/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.1
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.0
+is_signature_from_type_hint: false
+mlflow_version: 3.3.1
+model_id: m-efc1463bd6be48a69e90ab365d025762
+model_size_bytes: 13414
+model_uuid: m-efc1463bd6be48a69e90ab365d025762
+prompts: null
+run_id: 78af44bd5d13446f9d29667a21cd60a5
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "PULocationID", "required": true}, {"type":
+    "double", "name": "DOLocationID", "required": true}, {"type": "double", "name":
+    "time_sin", "required": true}, {"type": "double", "name": "time_cos", "required":
+    true}, {"type": "double", "name": "trip_distance", "required": true}, {"type":
+    "double", "name": "total_amount", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-08-24 08:40:49.981796'

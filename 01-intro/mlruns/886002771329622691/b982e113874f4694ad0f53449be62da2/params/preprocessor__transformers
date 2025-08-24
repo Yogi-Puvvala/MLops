@@ -1,0 +1,1 @@
+[('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), ['PULocationID', 'DOLocationID'])]

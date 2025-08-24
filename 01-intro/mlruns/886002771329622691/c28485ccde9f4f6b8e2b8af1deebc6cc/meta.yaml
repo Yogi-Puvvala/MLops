@@ -1,0 +1,14 @@
+artifact_uri: mlflow-artifacts:/886002771329622691/c28485ccde9f4f6b8e2b8af1deebc6cc/artifacts
+end_time: 1756025061142
+entry_point_name: ''
+experiment_id: '886002771329622691'
+lifecycle_stage: active
+run_id: c28485ccde9f4f6b8e2b8af1deebc6cc
+run_name: Duration Prediction Model - LR
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756025057195
+status: 3
+tags: []
+user_id: codespace
