@@ -220,4 +220,8 @@ __marimo__/
 *.model
 *.bin
 
+# MLflow tracking folders
+mlruns/
+mlartifacts/
+
 
