@@ -168,7 +168,7 @@ def model_registry_task(exp_name):
     best_run = client.search_runs(
         experiment_ids=[exp_id], order_by=["metrics.RMSE ASC"], max_results=1
     )[0]
-
+    
     best_run_id = best_run.info.run_id
     best_run_mod = best_run.data.tags["mlflow.runName"]
     model_uri = f"runs:/{best_run_id}/{best_run_mod}"
