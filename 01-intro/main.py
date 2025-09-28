@@ -1,48 +1,52 @@
-# from fastapi import FastAPI, Path, Query, HTTPException
-# import pandas as pd
+# Get Request:
 
-# app = FastAPI()
-# data = pd.read_json("patients.json")
-# patients_json = data.to_dict(orient="records")
+from fastapi import FastAPI, Path, Query, HTTPException
+import pandas as pd
+import json
 
-# @app.get("/")
-# def sayHello():
-#     return {"message": "This is an Patient Management System API."}
+app = FastAPI()
 
-# @app.get("/view")
-# def view():
-#     return patients_json
+with open("patients.json", "r") as file:
+    data = json.load(file)
 
-# @app.get("/patient/{pid}")
-# def patient(pid: str = Path(..., description = "ID of a particular patient", example = "P001")):
-#     for item in patients_json:
-#         if item.get("patient_id") == pid:
-#             return item
-#     # return {"message": "Sorry! The patient you're looking for is not in our DB."}
-#     raise HTTPException(status_code=404, detail="patient not found in our DB!")
+@app.get("/")
+def sayHello():
+    return {"message": "This is an Patient Management System API."}
 
-# @app.get("/showPatients/")
-# def showPatients(
-#     gender: str = Query(default=None, description="Enter the gender", example="Male"),
-#     sort_by: str = Query(default=None, description="Enter the desired sorting order (Asc or Desc)", example="Asc")):
+@app.get("/view")
+def view():
+    return data
 
-#     if gender is not None and not gender in ["Male", "Female"]:
-#         raise HTTPException(404, detail = "gender should be a Male or Female")
-#     if sort_by is not None and not sort_by in ["Asc", "Dec"]:
-#         raise HTTPException(404, detail = "sorting should be a Asc or Dec")
+@app.get("/patient/{pid}")
+def patient(pid: str = Path(..., description = "ID of a particular patient", example = "P001")):
+    for item in data:
+        if item.get("pid") == pid:
+            return item
+    # return {"message": "Sorry! The patient you're looking for is not in our DB."}
+    raise HTTPException(status_code=404, detail="patient not found in our DB!")
+
+@app.get("/showPatients/")
+def showPatients(
+    gender: str = Query(default=None, description="Enter the gender", example="Male"),
+    sort_by: str = Query(default=None, description="Enter the desired sorting order (Asc or Desc)", example="Asc")):
+
+    if gender is not None and not gender in ["Male", "Female"]:
+        raise HTTPException(404, detail = "gender should be a Male or Female")
+    if sort_by is not None and not sort_by in ["Asc", "Dec"]:
+        raise HTTPException(404, detail = "sorting should be a Asc or Dec")
     
-#     res = patients_json
+    res = data
 
-#     if gender is not None:
-#         res = [item for item in res if item.get("gender") == gender]
+    if gender is not None:
+        res = [item for item in res if item.get("gender") == gender]
 
-#     if sort_by is not None:
-#         if sort_by == "Asc":
-#             res = sorted(res, key=lambda item: item["age"])
-#         else:
-#             res = sorted(res, key=lambda item: -item["age"])
+    if sort_by is not None:
+        if sort_by == "Asc":
+            res = sorted(res, key=lambda item: item["age"])
+        else:
+            res = sorted(res, key=lambda item: -item["age"])
 
-#     return res
+    return res
 
 
 # Pydantic
@@ -117,33 +121,33 @@
 
 # insert_data(patient1)
 
-from pydantic import BaseModel
+# from pydantic import BaseModel
 
-class Address(BaseModel):
+# class Address(BaseModel):
 
-    city: str
-    state: str
-    pincode: str
+#     city: str
+#     state: str
+#     pincode: str
 
-class Patient(BaseModel):
+# class Patient(BaseModel):
 
-    name: str
-    age: int
-    gender: str
-    address: Address
+#     name: str
+#     age: int
+#     gender: str
+#     address: Address
 
-data = {
-    "name": "Yogi",
-    "age": 19,
-    "gender": "male",
-    "address": {
-        "city": "visakhapatnam",
-        "state": "AP",
-        "pincode": "530011"
-    }
-}
+# data = {
+#     "name": "Yogi",
+#     "age": 19,
+#     "gender": "male",
+#     "address": {
+#         "city": "visakhapatnam",
+#         "state": "AP",
+#         "pincode": "530011"
+#     }
+# }
 
-patient1 = Patient(**data)
+# patient1 = Patient(**data)
 
 # def insert_data(patient: Patient):
 #     print(patient.name)
@@ -155,7 +159,125 @@ patient1 = Patient(**data)
 
 # insert_data(patient1)
 
-details = patient1.model_dump(include={"name", "age"})
-# details = patient1.model_dump(exclude = {"address": ["city"]})
-print(details)
+# details = patient1.model_dump(include = {"name", "age"})
+# # details = patient1.model_dump(exclude = {"address": ["city"]})
+# print(details)
+
+
+# Post Request
+
+from fastapi import FastAPI
+from pydantic import BaseModel, Field, computed_field
+from typing import Annotated, Literal
+
+class Patient(BaseModel):
+    pid: Annotated[str, Field(description="Patient ID", examples=["P001"])]
+    name: Annotated[str, Field(description="Name of the patient", examples=["Yogi"])]
+    city: Annotated[str, Field(description="Name of the city", examples=["Visakhapatnam", "Guntur"])]
+    age: Annotated[int, Field(gt=0, description="Age of the patient", examples=[19, 27, 45])]
+    gender: Annotated[Literal["Male", "Female", "Others"], Field(description="Gender of the patient")]
+    height: Annotated[float, Field(description="Height of the patient", examples=[1.72], gt=0)]
+    weight: Annotated[float, Field(description="Weight of the patient", examples=[70.5], gt=0)]
+
+    @computed_field
+    @property
+    def bmi(self) -> float:
+        return round(self.weight/self.height**2, 2)
+    
+    @computed_field
+    @property
+    def verdict(self) -> str:
+        if self.bmi < 18.5:
+            return "Under Weight"
+        elif self.bmi < 30:
+            return "Normal"
+        else:
+            return "Over Weight"
+        
+@app.post("/create")
+def create_patient(patient: Patient):
+
+    # Check whether the patient already exists
+    for item in data:
+        if item["pid"] == patient.pid:
+            raise HTTPException(status_code=400, detail="The patient already exists in our database!")
+        
+    # Add patient to the database
+    data.append(patient.model_dump())
+
+    # Save the data to the JSON file
+    with open("patients.json", "w") as file:
+        json.dump(data, file)
+
+    return {"message": "Patient created successfully!"}
+
+
+# Put Request
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Optional
+
+class PatientUpdate(BaseModel):
+    pid: Annotated[Optional[str], Field(description="Patient ID", examples=["P001"], default=None)]
+    name: Annotated[Optional[str], Field(description="Name of the patient", examples=["Yogi"], default=None)]
+    city: Annotated[Optional[str], Field(description="Name of the city", examples=["Visakhapatnam", "Guntur"], default=None)]
+    age: Annotated[Optional[int], Field(gt=0, description="Age of the patient", examples=[19, 27, 45], default=None)]
+    gender: Annotated[Optional[Literal["Male", "Female", "Others"]], Field(description="Gender of the patient", default=None)]
+    height: Annotated[Optional[float], Field(description="Height of the patient", examples=[1.72], gt=0, default=None)]
+    weight: Annotated[Optional[float], Field(description="Weight of the patient", examples=[70.5], gt=0, default=None)]
+
+@app.put("/edit/{pid}")
+def update_patient(pid: str, patient_update: PatientUpdate):
+    req_data = {}
+
+    for item in data:
+        if item["pid"] == pid:
+            req_data = item.copy()  # safer than reference
+
+    # Checking whether the patient exists or not
+    if not req_data:
+        raise HTTPException(status_code=404, detail="The patient doesn't exist in the db.")
+    
+    # Combining the updated and previous values
+    updated_data = patient_update.model_dump()
+    req_data.update(updated_data)
+
+    # Placing the updated row in the db
+    for i, item in enumerate(data):
+        if item["pid"] == req_data["pid"]:
+            data[i] = req_data
+            break
+
+    # Updating the JSON file
+    with open("patients.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+    return {"message": "Patient info updated successfully."}
+
+
+# Delete Request
+
+@app.delete("/remove/{pid}")
+def remove_patient(pid: str):
+    req_data = {}
+
+    for item in data:
+        if item["pid"] == pid:
+            req_data = item
+            break
+
+    # Checking whether the data exist in db or not
+    if not req_data:
+        raise HTTPException(status_code=404, detail="Patient doesn't exist in db!!")
+    
+    # Removing the data
+    data.remove(req_data)
+
+    # Updating the Json file
+    with open("patients.json", "w") as file:
+        json.dump(data, file, indent=4)
+
+    return {"message": "The specified patient info successfully removed from db."}
+
 
