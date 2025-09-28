@@ -219,6 +219,7 @@ __marimo__/
 *.h5
 *.model
 *.bin
+*.json
 
 # MLflow tracking folders
 mlruns/
