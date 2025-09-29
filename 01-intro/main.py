@@ -281,3 +281,33 @@ def remove_patient(pid: str):
     return {"message": "The specified patient info successfully removed from db."}
 
 
+# Serving ML Models with FastAPI
+
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
+from typing import Annotated, Literal
+import pickle
+import pandas
+
+class Person(BaseModel):
+
+    bmi: Annotated[float, Field(description="Body-mass index of the person", examples=[21.92])]
+    age_group: Annotated[Literal["young", "adult", "middle_aged", "senior"], Field(description="Age group of the person", examples=["young", "senior"])]
+    lifestyle_risk: Annotated[Literal["low", "medium", "high"], Field(description="Lifestyle risk of the person", examples = ["low", "high"])]
+    city_tier: Annotated[Literal["1", "2", "3"], Field(description="City-tier of the person", examples=["1", "3"])]
+    income_lpa: Annotated[float, Field(description="Income (in LPA) of the person", examples=[14.54, 36.69])]
+    occupation: Annotated[str, Field(description="Occupation of the person", examples=["freelancer", "retired"])]
+
+@app.post("/check/")
+def check_person(person: Person):
+
+    # Loading Model
+    with open("insurance.pkl", "rb") as file:
+        model = pickle.load(file)
+
+    # Converting the person's json into dataframe
+    df = pd.DataFrame(person.model_dump(), index = [0])
+    res = model.predict(df)
+
+    return {"Insurance Premium Category": res[0]}
+
