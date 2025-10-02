@@ -291,7 +291,7 @@ import pandas
 
 class Person(BaseModel):
 
-    bmi: Annotated[float, Field(description="Body-mass index of the person", examples=[21.92])]
+    bmi: Annotated[float, Field(gt=0, description="Body-mass index of the person", examples=[21.92])]
     age_group: Annotated[Literal["young", "adult", "middle_aged", "senior"], Field(description="Age group of the person", examples=["young", "senior"])]
     lifestyle_risk: Annotated[Literal["low", "medium", "high"], Field(description="Lifestyle risk of the person", examples = ["low", "high"])]
     city_tier: Annotated[Literal["1", "2", "3"], Field(description="City-tier of the person", examples=["1", "3"])]
